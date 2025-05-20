@@ -1,9 +1,8 @@
 name: Publish Package to npm
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [created] # Se activa cuando se crea una nueva release
 
 permissions:
   contents: write
@@ -11,21 +10,22 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  release: 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
+        with: 
+          node-version: "lts/*"
       - run: npm ci
       - run: npm run build
       - run: npm audit signatures
       - name: Publish
-        env:
+        env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm run semantic-release
+      
 
   # publish-npm:
   #   runs-on: ubuntu-latest
