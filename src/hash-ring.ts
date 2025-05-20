@@ -10,20 +10,24 @@ export class HashRing<T> {
   private nodesMap = new Map<string, T>();
   private replicas: number;
   private hashFn: (key: string) => string;
+  private sortFn?: (a: string, b: string) => number;
 
   /**
    * @param nodes     Initial list of nodes.
    * @param replicas  Number of virtual replicas per node (default 50).
    * @param hashFn    Hash function (default SHA-256 hex).
+   * @param sortFn   Optional sorting function for the ring.
    */
   constructor(
     nodes: T[] = [],
     replicas = 50,
     hashFn: (key: string) => string = (key) =>
-      createHash('sha256').update(key).digest('hex')
+      createHash('sha256').update(key).digest('hex'),
+    sortFn?: (a: string, b: string) => number  
   ) {
     this.replicas = replicas;
     this.hashFn = hashFn;
+    this.sortFn = sortFn;
     nodes.forEach((n) => this.addNode(n));
   }
 
@@ -35,6 +39,7 @@ export class HashRing<T> {
       this.ring.push(digest);
       this.nodesMap.set(digest, node);
     }
+    if (this.sortFn) this.ring.sort(this.sortFn);
     this.ring.sort(); // For hex strings, lexicographical order = numerical order
   }
 
