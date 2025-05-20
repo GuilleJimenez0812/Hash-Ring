@@ -1,8 +1,9 @@
 name: Publish Package to npm
 
 on:
-  release:
-    types: [created] # Se activa cuando se crea una nueva release
+  push:
+    branches:
+      - main
 
 permissions:
   contents: write
