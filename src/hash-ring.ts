@@ -13,12 +13,12 @@ export class HashRing<T> {
 
   /**
    * @param nodes     Initial list of nodes.
-   * @param replicas  Number of virtual replicas per node (default 100).
+   * @param replicas  Number of virtual replicas per node (default 50).
    * @param hashFn    Hash function (default SHA-256 hex).
    */
   constructor(
     nodes: T[] = [],
-    replicas = 100,
+    replicas = 50,
     hashFn: (key: string) => string = (key) =>
       createHash('sha256').update(key).digest('hex')
   ) {
