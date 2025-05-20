@@ -1,25 +1,33 @@
-name: Publish to npm
+name: Publish Package to npm
 
 on:
-  push:
-    tags:
-      - 'v*' # Trigger only when pushing version tags like v1.0.1
+  release:
+    types: [created] # Se activa cuando se crea una nueva release
 
 jobs:
-  publish:
+  publish-npm:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read # Necesario para checkout del código
+      # packages: write # Descomentar si también publicas a GitHub Packages Registry
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: '20' # Especifica la versión de Node.js que usas
+          registry-url: 'https://registry.npmjs.org' # Obligatorio para configurar la autenticación
 
-      - run: npm ci
-      - run: npm run build # Optional, if your package needs to be built
-      - run: npm publish --access public
+      - name: Install dependencies
+        run: npm ci # O 'npm install' si no tienes package-lock.json
+
+      # Descomenta la siguiente sección si necesitas compilar tu código TypeScript a JavaScript
+      # - name: Build TypeScript
+      #   run: npm run build # Asume que tienes un script 'build' en tu package.json, ej: "tsc"
+
+      - name: Publish to npm
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
