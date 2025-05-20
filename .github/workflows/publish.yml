@@ -4,30 +4,52 @@ on:
   release:
     types: [created] # Se activa cuando se crea una nueva release
 
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
-  publish-npm:
+  release: 
     runs-on: ubuntu-latest
-    permissions:
-      contents: read # Necesario para checkout del código
-      # packages: write # Descomentar si también publicas a GitHub Packages Registry
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: 
+          node-version: "lts/*"
+      - run: npm ci
+      - run: npm run build
+      - run: npm audit signatures
+      - name: Publish
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run semantic-release
+      
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20' # Especifica la versión de Node.js que usas
-          registry-url: 'https://registry.npmjs.org' # Obligatorio para configurar la autenticación
+  # publish-npm:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read # Necesario para checkout del código
+  #     # packages: write # Descomentar si también publicas a GitHub Packages Registry
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci # O 'npm install' si no tienes package-lock.json
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20' # Especifica la versión de Node.js que usas
+  #         registry-url: 'https://registry.npmjs.org' # Obligatorio para configurar la autenticación
 
-      # Descomenta la siguiente sección si necesitas compilar tu código TypeScript a JavaScript
-      # - name: Build TypeScript
-      #   run: npm run build # Asume que tienes un script 'build' en tu package.json, ej: "tsc"
+  #     - name: Install dependencies
+  #       run: npm ci # O 'npm install' si no tienes package-lock.json
 
-      - name: Publish to npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     # Descomenta la siguiente sección si necesitas compilar tu código TypeScript a JavaScript
+  #     # - name: Build TypeScript
+  #     #   run: npm run build # Asume que tienes un script 'build' en tu package.json, ej: "tsc"
+
+  #     - name: Publish to npm
+  #       run: npm publish --access public
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
