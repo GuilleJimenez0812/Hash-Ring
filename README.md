@@ -1,22 +1,22 @@
 # HashRing
 
-Librería de **Hash Ring** (Consistent Hashing) en TypeScript para distribuir llaves de forma uniforme entre nodos.
+**Hash Ring** (Consistent Hashing) library in TypeScript for uniformly distributing keys across nodes.
 
 ---
 
-## 📦 Instalación
+## 📦 Installation
 
 ```bash
-# Usando npm
+# Using npm
 npm install generic_hash_ring
 
-# Usando yarn
+# Using yarn
 yarn add generic_hash_ring
 ```
 
 ---
 
-## 🚀 Uso básico
+## 🚀 Basic Usage
 
 ```ts
 import { HashRing } from 'hashring';
@@ -26,21 +26,21 @@ interface Server {
   host: string;
 }
 
-// Creamos instancias de nodos
+// Create node instances
 const nodes: Server[] = [
   { id: 'node1', host: '10.0.0.1' },
   { id: 'node2', host: '10.0.0.2' },
   { id: 'node3', host: '10.0.0.3' },
 ];
 
-// Inicializamos el anillo con 100 réplicas por nodo
+// Initialize the ring with 100 replicas per node
 const ring = new HashRing<Server>(nodes, 100);
 
-// Obtenemos el nodo responsable de una llave
+// Get the node responsible for a key
 const key = 'user:1234';
 const server = ring.getNode(key);
 
-console.log(`La llave "${key}" corresponde a:`, server);
+console.log(`Key "${key}" maps to:`, server);
 ```
 
 ---
@@ -57,62 +57,62 @@ new HashRing<T>(
 )
 ```
 
-- `nodes` (T[]) — Lista inicial de nodos.
-- `replicas` (number) — Réplicas virtuales por nodo (por defecto 100).
-- `hashFn` (key: string) => string — Función de hash (por defecto SHA-256 en hexadecimal).
+- `nodes` (T[]) — Initial list of nodes.
+- `replicas` (number) — Virtual replicas per node (default 100).
+- `hashFn` (key: string) => string — Hash function (default SHA-256 in hex).
 
 ---
 
-### Métodos
+### Methods
 
 #### addNode(node: T): void
 
-Agrega un nodo (y sus réplicas) al anillo.
+Adds a node (and its replicas) to the ring.
 
 #### removeNode(node: T): void
 
-Elimina un nodo (y todas sus réplicas) del anillo.
+Removes a node (and all its replicas) from the ring.
 
-#### getNode(key: string): T \| undefined
+#### getNode(key: string): T | undefined
 
-Dada una llave, retorna el nodo correspondiente. Devuelve `undefined` si el anillo está vacío.
+Given a key, returns the corresponding node. Returns `undefined` if the ring is empty.
 
 #### getNodesCount(): number
 
-Número de **nodos físicos** en el anillo.
+Number of **physical nodes** in the ring.
 
 ---
 
-## ⚙️ Scripts disponibles
+## ⚙️ Available Scripts
 
-En el `package.json`:
+In `package.json`:
 
-- `npm run build` — Compila TypeScript a JavaScript en `./dist`.
-- `npm run dev` — Ejecuta `src/index.ts` con `ts-node`.
-- `npm start` — Ejecuta `dist/index.js` con Node.js.
+- `npm run build` — Compiles TypeScript to JavaScript in `./dist`.
+- `npm run dev` — Runs `src/index.ts` with `ts-node`.
+- `npm start` — Runs `dist/index.js` with Node.js.
 
 ---
 
-## 📖 Ejemplo completo
+## 📖 Complete Example
 
 ```ts
 import { HashRing } from 'hashring';
 
 type Node = string;
 
-// Inicializamos con dos nodos y 50 réplicas
+// Initialize with two nodes and 50 replicas
 const ring = new HashRing<Node>(['A', 'B'], 50);
 
-// Asignamos varias llaves
+// Assign several keys
 const keys = ['alpha', 'beta', 'gamma', 'delta'];
 
 keys.forEach((k) => {
   console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`);
 });
 
-// Agregamos un nuevo nodo
+// Add a new node
 ring.addNode('C');
-console.log('\nDespués de agregar C:');
+console.log('\nAfter adding C:');
 keys.forEach((k) => {
   console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`);
 });
@@ -120,7 +120,7 @@ keys.forEach((k) => {
 
 ---
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto se distribuye bajo la **Apache License 2.0**.  
-Consulta el archivo [`LICENSE`](./LICENSE) para más detalles.
+This project is distributed under the **Apache License 2.0**.  
+See the [`LICENSE`](./LICENSE) file for more details.
