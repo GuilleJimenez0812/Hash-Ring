@@ -1,5 +1,5 @@
 {
-  "name": "hash_ring",
+  "name": "generic_hash_ring",
   "version": "1.0.4",
   "description": "",
   "main": "index.js",
