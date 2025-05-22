@@ -17,7 +17,7 @@ import { createHash } from 'crypto';
  * @returns {HashRing<T>}
  *   A new instance of HashRing.
  */
-export class HashRing<T> {
+export default class HashRing<T> {
   private ring: string[] = [];
   private nodesMap = new Map<string, T>();
   private replicas: number;
@@ -54,7 +54,7 @@ export class HashRing<T> {
    * ## Returns
    * @returns {void}
    */
-  addNode(node: T): void {
+  public addNode(node: T): void {
     for (let i = 0; i < this.replicas; i++) {
       const vNodeKey = `${String(node)}:${i}`;
       const digest = this.hashFn(vNodeKey);
@@ -76,7 +76,7 @@ export class HashRing<T> {
    * ## Returns
    * @returns {void}
    */
-  removeNode(node: T): void {
+  public removeNode(node: T): void {
     for (let i = 0; i < this.replicas; i++) {
       const vNodeKey = `${String(node)}:${i}`;
       const digest = this.hashFn(vNodeKey);
@@ -98,7 +98,7 @@ export class HashRing<T> {
    * @returns {T | undefined}
    *   The node responsible for the given key, or `undefined` if the ring is empty.
    */
-  getNode(key: string): T | undefined {
+  public getNode(key: string): T | undefined {
     if (!this.ring.length) return undefined;
     const digest = this.hashFn(key);
     let idx = this.binarySearch(digest);
@@ -139,7 +139,7 @@ export class HashRing<T> {
    * @returns {number}
    *   Count of unique physical nodes.
    */
-  getNodesCount(): number {
+  public getNodesCount(): number {
     return this.ring.length / this.replicas;
   }
 }
