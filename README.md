@@ -8,10 +8,10 @@ Librería de **Hash Ring** (Consistent Hashing) en TypeScript para distribuir ll
 
 ```bash
 # Usando npm
-npm install @guillejimenez0812/hash_ring
+npm install hash_ring
 
 # Usando yarn
-yarn add @guillejimenez0812/hash_ring
+yarn add hash_ring
 ```
 
 ---
