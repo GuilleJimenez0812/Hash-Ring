@@ -1,6 +1,11 @@
 // src/HashRing.ts
 import { createHash } from 'crypto';
 
+// NOTE: A B-tree should be used to determine which node is closest to the hash.
+// Add functionality to select which side of the ring to search.
+// It should be possible to pass a node and get all ranges that belong to that node, including its virtual replicas.
+// It should be possible to pass a range and determine which node it corresponds to.
+
 /**
  * ## Description
  * Generic class that implements a hash ring (consistent hashing).
@@ -18,7 +23,7 @@ import { createHash } from 'crypto';
  *   A new instance of HashRing.
  */
 export default class HashRing<T> {
-  private ring: string[] = [];
+  private ring: string[] = []; //TODO: CHANGE TO BINARY TREE
   private nodesMap = new Map<string, T>();
   private replicas: number;
   private hashFn: (key: string) => string;
