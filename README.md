@@ -19,11 +19,11 @@ yarn add generic_hash_ring
 ## 🚀 Basic Usage
 
 ```ts
-import { HashRing } from 'hashring';
+import HashRing from 'generic_hash_ring'
 
 interface Server {
-  id: string;
-  host: string;
+  id: string
+  host: string
 }
 
 // Create node instances
@@ -31,16 +31,16 @@ const nodes: Server[] = [
   { id: 'node1', host: '10.0.0.1' },
   { id: 'node2', host: '10.0.0.2' },
   { id: 'node3', host: '10.0.0.3' },
-];
+]
 
 // Initialize the ring with 100 replicas per node
-const ring = new HashRing<Server>(nodes, 100);
+const ring = new HashRing<Server>(nodes, 100)
 
 // Get the node responsible for a key
-const key = 'user:1234';
-const server = ring.getNode(key);
+const key = 'user:1234'
+const server = ring.getNode(key)
 
-console.log(`Key "${key}" maps to:`, server);
+console.log(`Key "${key}" maps to:`, server)
 ```
 
 ---
@@ -53,13 +53,19 @@ console.log(`Key "${key}" maps to:`, server);
 new HashRing<T>(
   nodes?: T[],
   replicas?: number,
-  hashFn?: (key: string) => string
+  hashFn?: (key: string) => string,
+  spreadHashing?: boolean,
+  sortFn?: (a: string, b: string) => number,
+  nodeToString?: (node: T) => string
 )
 ```
 
 - `nodes` (T[]) — Initial list of nodes.
-- `replicas` (number) — Virtual replicas per node (default 100).
-- `hashFn` (key: string) => string — Hash function (default SHA-256 in hex).
+- `replicas` (number) — Virtual replicas per node (default: 50).
+- `hashFn` (key: string) => string — Custom hash function (default: SHA-256 hex).
+- `spreadHashing` (boolean) — Spread replicas to minimize adjacency (default: true).
+- `sortFn` (a: string, b: string) => number — Custom sort comparator for numeric hashes.
+- `nodeToString` (node: T) => string — Convert a node to a string key (default: toString/JSON).
 
 ---
 
@@ -73,7 +79,7 @@ Adds a node (and its replicas) to the ring.
 
 Removes a node (and all its replicas) from the ring.
 
-#### getNode(key: string): T | undefined
+#### getNode(key: string): T \| undefined
 
 Given a key, returns the corresponding node. Returns `undefined` if the ring is empty.
 
@@ -90,32 +96,33 @@ In `package.json`:
 - `npm run build` — Compiles TypeScript to JavaScript in `./dist`.
 - `npm run dev` — Runs `src/index.ts` with `ts-node`.
 - `npm start` — Runs `dist/index.js` with Node.js.
+- `npm run semantic-release` — Automates versioning and publishing.
 
 ---
 
 ## 📖 Complete Example
 
 ```ts
-import { HashRing } from 'hashring';
+import HashRing from 'generic_hash_ring'
 
-type Node = string;
+type Node = string
 
 // Initialize with two nodes and 50 replicas
-const ring = new HashRing<Node>(['A', 'B'], 50);
+const ring = new HashRing<Node>(['A', 'B'], 50)
 
 // Assign several keys
-const keys = ['alpha', 'beta', 'gamma', 'delta'];
+const keys = ['alpha', 'beta', 'gamma', 'delta']
 
-keys.forEach((k) => {
-  console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`);
-});
+keys.forEach(k => {
+  console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`)
+})
 
 // Add a new node
-ring.addNode('C');
-console.log('\nAfter adding C:');
-keys.forEach((k) => {
-  console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`);
-});
+ring.addNode('C')
+console.log('\nAfter adding C:')
+keys.forEach(k => {
+  console.log(`Key="${k}" -> Node="${ring.getNode(k)}"`)
+})
 ```
 
 ---
